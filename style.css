@@ -1,0 +1,65 @@
+.header {
+    background-color: #333;
+    color: white;
+    padding: 10px;
+}
+
+.pixel-row {
+    white-space: nowrap;
+}
+
+.pixel {
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    border: 1px solid #ddd;
+    margin: -1px;
+    cursor:  url("cursor.cur"), auto;
+}
+
+.menu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 10px;
+    min-width: 180px;
+}
+
+.menu .close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    padding: 5px;
+}
+
+.menu .close:hover {
+    color: red;
+}
+
+.color-picker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.color-picker input[type="color"] {
+    margin-bottom: 10px;
+}
+
+.color-picker .color-label {
+    font-size: 12px;
+}
+
+.protector-option {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.protector-option .color-label {
+    margin-right: 5px;
+}

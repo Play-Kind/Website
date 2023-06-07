@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Davido Finko</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="header">Pixel Website</div>
+    <div id="pixelGrid"></div>
+
+    <script>
+        // Variablen für die Rastergröße
+        var verticalPixels = 40;
+        var horizontalPixels = 100;
+        var currentMenu = null;
+        var pixelColors = {};
+        var pixelProtectorStates = {};
+
+        // Raster erstellen
+        var pixelGrid = document.getElementById("pixelGrid");
+
+        for (var y = 1; y <= verticalPixels; y++) {
+            var pixelRow = document.createElement("div");
+            pixelRow.className = "pixel-row";
+
+            for (var x = 1; x <= horizontalPixels; x++) {
+                var pixel = document.createElement("div");
+                pixel.className = "pixel";
+                pixel.setAttribute("data-x", x);
+                pixel.setAttribute("data-y", y);
+
+                // Event Listener für den Klick auf einen Pixel
+                pixel.addEventListener("click", function() {
+                    var x = this.getAttribute("data-x");
+                    var y = this.getAttribute("data-y");
+                    openMenu(x, y);
+                });
+
+                pixelRow.appendChild(pixel);
+            }
+
+            pixelGrid.appendChild(pixelRow);
+        }
+
+        // Menü öffnen
+        function openMenu(x, y) {
+            // Menü schließen, wenn bereits geöffnet
+            if (currentMenu) {
+                closeMenu(currentMenu);
+            }
+
+            var pixelName = "Pixel " + x + "-" + y;
+            var menu = document.createElement("div");
+            menu.className = "menu";
+            menu.style.position = "absolute";
+
+            var header = document.createElement("h2");
+            header.innerText = pixelName;
+            header.style.cursor = "move";
+            header.addEventListener("mousedown", function(e) {
+                dragMenu(e, menu);
+            });
+
+            var closeButton = document.createElement("div");
+            closeButton.className = "close";
+            closeButton.innerText = "✕";
+            closeButton.addEventListener("click", function() {
+                closeMenu(menu);
+            });
+
+            var colorPicker = document.createElement("div");
+            colorPicker.className = "color-picker";
+
+            var colorLabel = document.createElement("label");
+            colorLabel.className = "color-label";
+            colorLabel.innerText = "Farbauswahl:";
+
+            var colorInput = document.createElement("input");
+            colorInput.type = "color";
+            colorInput.value = pixelColors[pixelName] || "#ffffff";
+            colorInput.disabled = pixelProtectorStates[pixelName] || false;
+            colorInput.addEventListener("input", function() {
+                pixelColors[pixelName] = colorInput.value;
+                applyColorToPixel(x, y, colorInput.value);
+            });
+
+            var protectorOption = document.createElement("div");
+            protectorOption.className = "protector-option";
+
+            var protectorToggle = document.createElement("input");
+            protectorToggle.type = "checkbox";
+            protectorToggle.id = "protectorToggle";
+            protectorToggle.checked = pixelProtectorStates[pixelName] || false;
+            protectorToggle.addEventListener("change", function() {
+                pixelProtectorStates[pixelName] = protectorToggle.checked;
+                colorInput.disabled = protectorToggle.checked;
+            });
+
+            var protectorLabel = document.createElement("label");
+            protectorLabel.className = "color-label";
+            protectorLabel.htmlFor = "protectorToggle";
+            protectorLabel.innerText = "Zum Protektorrat erklären:";
+
+            protectorOption.appendChild(protectorLabel);
+            protectorOption.appendChild(protectorToggle);
+
+            colorPicker.appendChild(colorLabel);
+            colorPicker.appendChild(colorInput);
+
+            menu.appendChild(header);
+            menu.appendChild(closeButton);
+            menu.appendChild(colorPicker);
+            menu.appendChild(protectorOption);
+
+            pixelGrid.appendChild(menu);
+            currentMenu = menu;
+        }
+
+        // Menü schließen
+        function closeMenu(menu) {
+            menu.parentNode.removeChild(menu);
+            currentMenu = null;
+        }
+
+        // Element verschieben
+        function dragMenu(e, menu) {
+            var pos1 = e.clientX;
+            var pos2 = e.clientY;
+            var menuTop = menu.offsetTop;
+            var menuLeft = menu.offsetLeft;
+
+            document.onmousemove = elementDrag;
+            document.onmouseup = closeDragElement;
+
+            function elementDrag(e) {
+                e = e || window.event;
+                e.preventDefault();
+                var top = menuTop - (pos2 - e.clientY);
+                var left = menuLeft - (pos1 - e.clientX);
+
+                menu.style.top = top + "px";
+                menu.style.left = left + "px";
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+        }
+
+        // Farbe auf Pixel anwenden
+        function applyColorToPixel(x, y, color) {
+            var pixel = document.querySelector(
+                '[data-x="' + x + '"][data-y="' + y + '"]'
+            );
+            pixel.style.backgroundColor = color;
+        }
+    </script>
+</body>
+</html>
